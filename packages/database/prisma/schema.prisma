@@ -1,0 +1,49 @@
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+
+model User {
+  id        String    @id @default(uuid())
+  username  String
+  email     String    @unique
+  password  String
+  balance   Decimal   @default(100000)
+  createdAt DateTime  @default(now())
+  updateAt  DateTime  @updatedAt
+  trade     Trade[]
+  positions Position[]
+}
+
+model Position{
+  id        String    @id @default(uuid())
+  userId    String    @unique
+  symbol    String    @unique
+  quantity  Int
+  avgPrice  Decimal
+  user      User      @relation(fields: [userId] , references: [id])
+}
+
+model Trade {
+  id        String    @id @default(uuid())
+  userId    String
+  symbol    String
+  side      TradeSide
+  price     Decimal
+  quantity  Int
+  createdAt DateTime
+  user      User      @relation(fields: [userId], references: [id])
+}
+
+enum TradeSide {
+  BUY
+  SELL
+}
