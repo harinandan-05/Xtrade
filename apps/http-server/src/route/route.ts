@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken'
 import {JWT_SECRET} from '@repo/common/common'
 import { Middleware } from '../middleware/middle'
 import { tokenToString } from 'typescript'
+import { BuyStock } from '../service/sell'
 
 
 const router:Router = express.Router();
@@ -109,10 +110,54 @@ router.get("/dashboard", Middleware,async  (req, res) => {
     }
   });
 
-router.get("/portfolio/:id", (req, res) => {});
+router.get("/portfolio",Middleware, async (req, res) => {
+  const userid = req.user
+  if(!userid){
+    return res.status(400).json({msg:"user id present"})
+  }
+  try{
+    const Finduser = await prismaClient.position.findUnique({
+      where:{
+        id:userid
+      },
+      select:{
+        userId:true,
+        symbol:true,
+        quantity:true,
+      }
+    })
+    if(!Finduser){
+      return res.status(400).json({msg:"no user found"})
+    }
+    return res.status(200).json({msg:"portfolio:",Finduser})
+}catch(err){
+  console.log(err)
+}
+});
 
-router.post("/trade", (req, res) => {});
+// router.post("/trade", Middleware,async (req, res) => {
+//   const userid = req.user
+//   try{
+    
+//   }
+// });
 
-router.get("/balance", (req, res) => {});
+// route
+router.post("/buy", Middleware, async (req, res) => {
+  try {
+    const userid = req.user;
+    if (!userid) return res.status(401).json({ msg: "Unauthorized" });
+
+    const { symbol, quantity } = req.body;
+    const result = await BuyStock(symbol, quantity, userid);
+
+    if (!result) return res.status(400).json({ msg: "Trade failed" });
+    res.json(result); 
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: "Something went wrong" });
+  }
+});
+
 
 export default router;
