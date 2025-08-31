@@ -1,16 +1,16 @@
-import express, { Router } from 'express'
-import bcrypt from 'bcrypt'
-import {prismaClient} from '@repo/database/client' 
-import jwt from 'jsonwebtoken'
-import {JWT_SECRET} from '@repo/common/common'
-import { Middleware } from '../middleware/middle'
-import { tokenToString } from 'typescript'
-import { BuyStock } from '../service/sell'
+import express, { Router } from "express";
+import bcrypt from "bcrypt";
+import { prismaClient } from "@repo/database/client";
+import jwt from "jsonwebtoken";
+import { JWT_SECRET } from "@repo/common/common";
+import { Middleware } from "../middleware/middle";
+import { tokenToString } from "typescript";
+import { BuyStock } from "../service/Buy";
+import { SellStock } from "../service/Sell";
 
+const router: Router = express.Router();
 
-const router:Router = express.Router();
-
-router.post('/signup', async (req, res) => {
+router.post("/signup", async (req, res) => {
   try {
     const { username, email, password } = req.body;
     if (!username || !email || !password) {
@@ -62,7 +62,7 @@ router.post("/login", async (req, res) => {
       return;
     }
 
-    const isMatch = await bcrypt.compare(password,checkUser.password);
+    const isMatch = await bcrypt.compare(password, checkUser.password);
     if (!isMatch) {
       res.status(401).json({ msg: "invalid password" });
     }
@@ -72,77 +72,85 @@ router.post("/login", async (req, res) => {
       JWT_SECRET
     );
 
-    res.status(200).json({msg:"logged in",token})
+    res.status(200).json({ msg: "logged in", token });
     return;
-
   } catch (error) {
     console.log(error);
     res.status(500).json({ msg: "sever error" });
   }
 });
 
-router.get("/dashboard", Middleware,async  (req, res) => {
-    const userid = req.user
-    try{
-      
+router.get("/dashboard", Middleware, async (req, res) => {
+  const userid = req.user;
+  try {
     const Finduser = await prismaClient.user.findUnique({
-      where:{
-        id:userid
-      }
-    })
-    if(!Finduser){
-      res.status(400).json({msg:"no user found"})
+      where: {
+        id: userid,
+      },
+    });
+    if (!Finduser) {
+      res.status(400).json({ msg: "no user found" });
     }
     const details = await prismaClient.user.findMany({
-      where:{
-        id:Finduser?.id
+      where: {
+        id: Finduser?.id,
       },
-      select:{
-        username:true,
-        balance:true,
-        trade:true,
-        positions:true
-      }
-    })
-    return res.status(200).json({msg:"dashboard details",details})
-    }catch(err){
-      console.log(err)
-    }
-  });
-
-router.get("/portfolio",Middleware, async (req, res) => {
-  const userid = req.user
-  if(!userid){
-    return res.status(400).json({msg:"user id present"})
+      select: {
+        username: true,
+        balance: true,
+        trade: true,
+        positions: true,
+      },
+    });
+    return res.status(200).json({ msg: "dashboard details", details });
+  } catch (err) {
+    console.log(err);
   }
-  try{
-    const Finduser = await prismaClient.position.findUnique({
-      where:{
-        id:userid
-      },
-      select:{
-        userId:true,
-        symbol:true,
-        quantity:true,
-      }
-    })
-    if(!Finduser){
-      return res.status(400).json({msg:"no user found"})
-    }
-    return res.status(200).json({msg:"portfolio:",Finduser})
-}catch(err){
-  console.log(err)
-}
 });
 
-// router.post("/trade", Middleware,async (req, res) => {
-//   const userid = req.user
-//   try{
-    
-//   }
-// });
+router.get("/portfolio", Middleware, async (req, res) => {
+  const userid = req.user;
+  if (!userid) {
+    return res.status(400).json({ msg: "user id present" });
+  }
+  try {
+    const Finduser = await prismaClient.position.findUnique({
+      where: {
+        id: userid,
+      },
+      select: {
+        userId: true,
+        symbol: true,
+        quantity: true,
+      },
+    });
+    if (!Finduser) {
+      return res.status(400).json({ msg: "no user found" });
+    }
+    return res.status(200).json({ msg: "portfolio:", Finduser });
+  } catch (err) {
+    console.log(err);
+  }
+});
 
-// route
+router.post("/sell", Middleware, async (req, res) => {
+  const userid = req.user;
+  try {
+    if (!userid) res.status(401).json({ msg: "unauthorized" });
+
+    const { symbol, quantity } = req.body;
+    if(!userid){
+      return
+    }
+    const response = await SellStock(symbol, quantity, userid);
+    if (!response) return res.status(400).json({ msg: "trade failed" });
+    res.json(response);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ msg: "something went wrong" });
+  }
+});
+
 router.post("/buy", Middleware, async (req, res) => {
   try {
     const userid = req.user;
@@ -152,12 +160,11 @@ router.post("/buy", Middleware, async (req, res) => {
     const result = await BuyStock(symbol, quantity, userid);
 
     if (!result) return res.status(400).json({ msg: "Trade failed" });
-    res.json(result); 
+    res.json(result);
   } catch (err) {
     console.error(err);
     res.status(500).json({ msg: "Something went wrong" });
   }
 });
-
 
 export default router;

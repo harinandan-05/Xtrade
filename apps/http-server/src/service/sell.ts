@@ -1,71 +1,59 @@
 import { prismaClient } from "@repo/database/client";
 import { getPrice } from "../trade.api/checkPrice";
 
-export async function BuyStock(symbol:string,quantity:number,userid:string){
+export async function SellStock(symbol: string, quantity: number, userid: string) {
+  const price: number = await getPrice(symbol);
 
-    const price:number = await getPrice(symbol)
+  return prismaClient.$transaction(async (tx) => {
+    const user = await tx.user.findUnique({
+      where: { id: userid },
+      select: { balance: true },
+    });
 
+    if (!user) {
+      throw new Error("user doesnt exist");
+    }
 
-    return prismaClient.$transaction(async(tx) =>{
-        const user = await tx.user.findUnique({
-            where:{
-                id:userid
-            },
-            select:{
-                balance:true
-            }
-        })
-        if(!user){throw new Error("user not found")}
+    const position = await tx.position.findUnique({
+      where: { userId_symbol: { userId: userid, symbol } },
+      select: { quantity: true },
+    });
 
-        const cost = price * quantity
+    if (!position) {
+      throw new Error("no stocks for this symbol");
+    }
 
-        const currentbalance  = user.balance.toNumber()
+    if (position.quantity < quantity) {
+      throw new Error("not enough stocks");
+    }
 
-        if(currentbalance< cost){
-            throw new Error("insufficient balance to make the trade")
-        }
-        
-        await tx.user.update({
-            where:{
-                id:userid
-            },
-            data:{
-                balance: currentbalance - cost
-            }
-        })
+    const cost = price * quantity;
 
+    await tx.user.update({
+      where: { id: userid },
+      data: { balance: { increment: cost } },
+    });
 
-        await tx.trade.create({
-            data: { userId:userid, symbol:symbol, side:"BUY", price:price, quantity:quantity }
-        })
+    await tx.position.update({
+      where: { userId_symbol: { userId: userid, symbol } },
+      data: { quantity: { decrement: quantity } },
+    });
 
-        const portfolio = await tx.position.findUnique({
-            where:{
-                userId:userid
-            }
-        })
-        if(!portfolio){
-            await tx.position.create({
-                data:{
-                    userId:userid,symbol:symbol,quantity:quantity,avgPrice:price
-                }
-            })
-        }
-        else{
-            const newQuantity = portfolio.quantity + quantity
-            const newAvg = (portfolio.avgPrice.toNumber() * portfolio.quantity + price *quantity) / newQuantity
-            await tx.position.update({
-                where:{
-                    userId:userid
-                },
-                data:{
-                    symbol:symbol,
-                    quantity:newQuantity,
-                    avgPrice:newAvg
-                }
-            })
-        }
+    await tx.trade.create({
+      data: {
+        userId: userid,
+        symbol,
+        side: "SELL",
+        price,
+        quantity,
+      },
+    });
 
-        return { success: true, symbol, quantity, price };  
-    })
+    const remainingStock = await tx.position.findUnique({
+      where: { userId_symbol: { userId: userid, symbol } },
+      select: { quantity: true },
+    });
+
+    return { success: true, quantity, price, remainingStock };
+  });
 }
