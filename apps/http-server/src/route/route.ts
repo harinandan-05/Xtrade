@@ -7,6 +7,7 @@ import { Middleware } from "../middleware/middle";
 import { tokenToString } from "typescript";
 import { BuyStock } from "../service/Buy";
 import { SellStock } from "../service/Sell";
+import { GetHistory } from "../service/Summary";
 
 const router: Router = express.Router();
 
@@ -114,9 +115,9 @@ router.get("/portfolio", Middleware, async (req, res) => {
     return res.status(400).json({ msg: "user id present" });
   }
   try {
-    const Finduser = await prismaClient.position.findUnique({
+    const Finduser = await prismaClient.position.findFirst({
       where: {
-        id: userid,
+        userId: userid,
       },
       select: {
         userId: true,
@@ -166,5 +167,39 @@ router.post("/buy", Middleware, async (req, res) => {
     res.status(500).json({ msg: "Something went wrong" });
   }
 });
+
+router.get('/market/:symbol', Middleware, async(req,res) =>{
+
+})
+
+router.post('/market/summary/symbol', Middleware, async (req, res) => {
+  try {
+    const userid = req.user; 
+    console.log("control at first user check");
+
+    if (!userid) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const { symbol } = req.body; 
+    console.log("symbol received:", symbol);
+
+    const summary = await GetHistory(symbol, userid);
+    console.log("got the output");
+
+    return res.json({ summary });
+  } catch (err) {
+    console.error("Error in /market/summary:", err);
+    return res.status(500).json({ error: "Something went wrong" });
+  }
+});
+
+
+
+
+router.get('/market-feed/history', Middleware, async(req,res) =>{
+  
+})
+
 
 export default router;

@@ -23,23 +23,25 @@ model User {
   positions Position[]
 }
 
-model Position{
-  id        String    @id @default(uuid())
-  userId    String    @unique
-  symbol    String    @unique
+model Position {
+  id        String   @id @default(uuid())
+  userId    String
+  symbol    String
   quantity  Int
   avgPrice  Decimal
-  user      User      @relation(fields: [userId] , references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, symbol])
 }
 
 model Trade {
   id        String    @id @default(uuid())
-  userId    String
+  userId    String  
   symbol    String
   side      TradeSide
   price     Decimal
   quantity  Int
-  createdAt DateTime
+  createdAt DateTime  @default(now())
   user      User      @relation(fields: [userId], references: [id])
 }
 

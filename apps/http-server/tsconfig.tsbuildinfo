@@ -1,1 +1,1 @@
-{"root":["./src/index.ts","./src/types.d.ts","./src/middleware/middle.ts","./src/route/route.ts","./src/service/buy.ts","./src/service/sell.ts","./src/trade.api/checkprice.ts"],"version":"5.9.2"}
+{"root":["./src/index.ts","./src/types.d.ts","./src/middleware/middle.ts","./src/route/route.ts","./src/service/buy.ts","./src/service/sell.ts","./src/service/summary.ts","./src/trade.api/history.ts","./src/trade.api/checkprice.ts"],"version":"5.9.2"}
