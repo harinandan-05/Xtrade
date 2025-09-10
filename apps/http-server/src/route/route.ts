@@ -4,7 +4,7 @@ import { prismaClient } from "@repo/database/client";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "@repo/common/common";
 import { Middleware } from "../middleware/middle";
-import { tokenToString } from "typescript";
+import { findAncestor, tokenToString } from "typescript";
 import { BuyStock } from "../service/Buy";
 import { SellStock } from "../service/Sell";
 import { GetHistory } from "../service/Summary";
@@ -201,5 +201,24 @@ router.get('/market-feed/history', Middleware, async(req,res) =>{
   
 })
 
+router.get('/balance',Middleware ,async(req,res) => {
+  const userid = req.user
+  try{
+    if(!userid){return res.status(400).json({msg:"no user Id"})}
 
+    const Finduser = await prismaClient.user.findUnique({
+      where:{
+        id:userid
+      }
+    })
+    if(!Finduser){
+      return res.status(400).json({msg:"no user exists"})
+    }
+
+    const balance = Finduser.balance
+    return res.status(200).json({msg:"balance:",balance})
+  }catch(err){
+    return res.status(500).json({msg:"internal server error"})
+  }
+})
 export default router;
