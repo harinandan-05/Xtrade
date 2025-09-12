@@ -3,18 +3,14 @@
 import { ReactNode } from "react";
 
 interface ButtonProps {
-  children: ReactNode;
-  className?: string;
-  appName: string;
+  input: string;
 }
 
-export const Button = ({ children, className, appName }: ButtonProps) => {
-  return (
-    <button
-      className={className}
-      onClick={() => alert(`Hello from your ${appName} app!`)}
-    >
-      {children}
-    </button>
-  );
-};
+export default function PrButton({input}:ButtonProps){
+  return(
+    <button className="bg-amber-400 text-white">
+    {input}
+  </button>
+  )
+  
+}
