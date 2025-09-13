@@ -1,18 +1,41 @@
-import WebSocket, { WebSocketServer } from "ws";
-    
-const wss = new WebSocketServer({port:8080})
-wss.on('connection',ws =>{
-    console.log("ws server connected")
+import { WebSocketServer, WebSocket } from "ws";
+// @ts-ignore
+import * as finnhub from "finnhub";
 
-    ws.on('message',message =>{
-        console.log(message)
-    })
+const API_KEY = "d32gdkhr01qn0gi3s9kgd32gdkhr01qn0gi3s9l0"; 
+const finnhubClient = new finnhub.DefaultApi(API_KEY);
 
-    ws.on('close',close =>{
-        console.log("connection closed")
-    })
+const wss = new WebSocketServer({ port: 8080 });
+console.log(" WS server running on ws://localhost:8080");
 
-    ws.send("welcome to xTrade")
-})
+function broadcast(data: any) {
+  wss.clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(JSON.stringify(data));
+    }
+  });
+}
 
-console.log("ws server running on port 8080");
+
+const symbols = ["BINANCE:BTCUSDT", "BINANCE:ETHUSDT"];
+
+// poll every 5 sec
+setInterval(() => {
+  symbols.forEach((symbol) => {
+    finnhubClient.quote(symbol, (err: any, data: any) => {
+      if (!err && data) {
+        broadcast({
+          type: "cryptoUpdate",
+          symbol,
+          price: data.c,
+          time: new Date().toISOString(),
+        });
+      }
+    });
+  });
+}, 1000 * 60);
+
+wss.on("connection", (ws) => {
+  console.log("Client connected");
+  ws.send(JSON.stringify({ type: "welcome", msg: "Connected to crypto WS" }));
+});
