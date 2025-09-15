@@ -1,29 +1,62 @@
-"use client"
-import ChartSection from '@/app/charts/chart';
-import { useRouter } from 'next/navigation';
+"use client";
+import DropDown from "@/app/buttons/dropdown";
+import ChartSection from "@/app/charts/chart";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 export default function Dashboard() {
-    const router = useRouter()
+  const router = useRouter();
+
+  const [symbol , setSymbol] = useState("ETHUSDT")
+  const wsRef = useRef<WebSocket | null>(null)
+
+  useEffect(() =>{
+    const ws_URL = 'ws://localhost:8080'
+    const ws = new WebSocket(ws_URL)
+    wsRef.current = ws
+
+    ws.onopen = () => {
+      console.log("WS Connected");
+      ws.send(JSON.stringify({ type: "subscribe", symbol }));
+    };
+
+  },[symbol])
+
+  function HandleSubmit(newSymbol:string){
+    setSymbol(newSymbol)
+    wsRef.current?.send(JSON.stringify({type:"subscribe",symbol:newSymbol}))
+  }
+
   return (
     <div className="bg-black min-h-screen flex text-white">
       {/* Sidebar */}
       <div className="bg-gray-900 min-h-screen w-56 flex flex-col items-center py-6 space-y-6 shadow-lg">
         <h1 className="text-green-400 font-bold text-2xl">Dashboard</h1>
-        <button  onClick={() => router.push('/')} className="w-40 py-2 rounded-md bg-green-500 hover:bg-green-600 transition">
+        <button
+          onClick={() => router.push("/")}
+          className="w-40 py-2 rounded-md bg-green-500 hover:bg-green-600 transition"
+        >
           Home
         </button>
-        <button onClick={() => router.push('/xtrade/portfolio')} className="w-40 py-2 rounded-md bg-gray-700 hover:bg-gray-600 transition">
+        <button
+          onClick={() => router.push("/xtrade/portfolio")}
+          className="w-40 py-2 rounded-md bg-gray-700 hover:bg-gray-600 transition"
+        >
           Portfolio
         </button>
-        <button  onClick={() => router.push('/xtrade/balance')} className="w-40 py-2 rounded-md bg-gray-700 hover:bg-gray-600 transition">
+        <button
+          onClick={() => router.push("/xtrade/balance")}
+          className="w-40 py-2 rounded-md bg-gray-700 hover:bg-gray-600 transition"
+        >
           Balance
         </button>
-        <button  onClick={() => router.push('/xtrade/portfolio')} className="w-40 py-2 rounded-md bg-gray-700 hover:bg-gray-600 transition">
+        <button
+          onClick={() => router.push("/xtrade/portfolio")}
+          className="w-40 py-2 rounded-md bg-gray-700 hover:bg-gray-600 transition"
+        >
           Settings
         </button>
-        <button onClick={() => router.push('')}>
-
-        </button>
+        <button onClick={() => router.push("")}></button>
       </div>
 
       {/* Right Section */}
@@ -31,7 +64,7 @@ export default function Dashboard() {
         {/* Charts Section */}
         <div className="bg-gray-900 rounded-xl p-4 shadow-lg">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-2xl font-bold text-green-400">ETH - 242342525 ^</h2>
+            <DropDown onselect={HandleSubmit}/>
             <span className="text-sm text-gray-400">Live Chart</span>
           </div>
           <ChartSection />
@@ -52,7 +85,9 @@ export default function Dashboard() {
           {/* Input Fields */}
           <div className="flex flex-col space-y-5">
             <div>
-              <label className="block text-sm text-gray-300 mb-1">Enter Quantity</label>
+              <label className="block text-sm text-gray-300 mb-1">
+                Enter Quantity
+              </label>
               <input
                 type="number"
                 placeholder="eg: 23"
@@ -60,7 +95,9 @@ export default function Dashboard() {
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-300 mb-1">Enter Symbol</label>
+              <label className="block text-sm text-gray-300 mb-1">
+                Enter Symbol
+              </label>
               <input
                 type="text"
                 placeholder="Eg : AAPL"
@@ -68,7 +105,9 @@ export default function Dashboard() {
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-300 mb-1">Enter Price</label>
+              <label className="block text-sm text-gray-300 mb-1">
+                Enter Price
+              </label>
               <input
                 type="number"
                 placeholder="eg: 243523"

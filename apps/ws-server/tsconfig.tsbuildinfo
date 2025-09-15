@@ -1,1 +1,1 @@
-{"root":["./src/index.ts","./src/finhubapi/getquote.ts","./src/live/index.ts"],"version":"5.9.2"}
+{"root":["./src/index.ts","./src/getsymbol/symbol.ts"],"version":"5.9.2"}
