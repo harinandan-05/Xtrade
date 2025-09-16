@@ -28,15 +28,13 @@ wss.on("connection", (ws) => {
           if (!err && data) {
             ws.send(
               JSON.stringify({
-                type: "cryptoUpdate",
-                symbol: currentSymbol,
-                price: data.c, 
+                value: Math.random(), 
                 time: new Date().toISOString(),
               })
             );
           }
         });
-      }, 5000); 
+      }, 1000); 
     }
   });
 

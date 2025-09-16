@@ -1,23 +1,15 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { BaselineSeries, createChart } from "lightweight-charts";
+import { createChart, BaselineSeries } from "lightweight-charts";
 import { UTCTimestamp } from "lightweight-charts";
 
-export default function ChartSection() {
-  const chartContainerRef = useRef<HTMLDivElement | null>(null);
-  useEffect(() => {
-    if (!chartContainerRef.current) {
-      return;
-    }
-    const chartOptions = {
-      layout: {
-        textColor: "black",
-        background: { type: "solid", color: "white" },
-      },
-    };
-    const chart = createChart(chartContainerRef.current, {
-      width: chartContainerRef.current.clientWidth,
+export default function ChartSection({ data }: any) {
+  const ChartRef = useRef<HTMLDivElement | any>('')
+  const baslineRef = useRef<HTMLDivElement | any>('')
+  useEffect(() =>{
+    const chart = createChart(ChartRef.current,{
+       width: ChartRef.current.clientWidth,
       height: 400,
       layout: {
         background: { color: "#111827" },
@@ -27,10 +19,10 @@ export default function ChartSection() {
         vertLines: { color: "#333" },
         horzLines: { color: "#333" },
       },
-    });
+    })
 
     const baselineSeries = chart.addSeries(BaselineSeries,{
-        baseValue: { type: "price", price: 25 },
+       baseValue: { type: "price", price: 25 },
       topLineColor: "rgba(38, 166, 154, 1)",
       topFillColor1: "rgba(38, 166, 154, 0.28)",
       topFillColor2: "rgba(38, 166, 154, 0.05)",
@@ -38,25 +30,30 @@ export default function ChartSection() {
       bottomFillColor1: "rgba(239, 83, 80, 0.05)",
       bottomFillColor2: "rgba(239, 83, 80, 0.28)",
     })
-    baselineSeries.setData([
-  { value: 1, time: 1642425322 as UTCTimestamp },
-  { value: 8, time: 1642511722 as UTCTimestamp },
-  { value: 10, time: 1642598122 as UTCTimestamp },
-  { value: 20, time: 1642684522 as UTCTimestamp },
-  { value: 3, time: 1642770922 as UTCTimestamp },
-  { value: 43, time: 1642857322 as UTCTimestamp },
-  { value: 41, time: 1642943722 as UTCTimestamp },
-  { value: 43, time: 1643030122 as UTCTimestamp },
-  { value: 56, time: 1643116522 as UTCTimestamp },
-  { value: 46, time: 1643202922 as UTCTimestamp },
-]);
+    baslineRef.current = baselineSeries
+
     chart.timeScale().fitContent();
+
     return () => chart.remove();
-  }, []);
+  },[])
+
+
+  useEffect(() =>{
+    if(!data){
+      return 
+    }
+
+    if(data.time && data.value){
+      baslineRef.current.update({
+        value:data.value,
+        time:Math.floor(new Date(data.time).getTime() / 1000) as UTCTimestamp
+      })
+    }
+
+  },[data])
+
   return (
-    <div
-      ref={chartContainerRef}
-      className="w-full h-[400px] rounded-2xl bg-gray-900"
-    ></div>
-  );
+    <div ref={ChartRef}className="w-full h-[400px] bg-gray-900">
+    </div>
+  )
 }
