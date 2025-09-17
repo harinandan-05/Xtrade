@@ -1,11 +1,27 @@
   "use client";
   import DropDown from "@/app/buttons/dropdown";
   import ChartSection from "@/app/charts/chart";
+import axios from "axios";
   import { useRouter } from "next/navigation";
-  import { EventHandler, useEffect, useRef, useState } from "react";
+  import { useEffect, useRef, useState } from "react";
 
   export default function Dashboard() {
-    const router = useRouter();
+    
+    const QnRef = useRef<HTMLInputElement>(null)
+    const PriceRef = useRef<HTMLInputElement>(null)
+    const SymbolRef = useRef<HTMLInputElement>(null)
+
+    const [Quantity,setQuantity] = useState(null)
+
+    async function Buy(){
+      const response = await axios.post("http://localhost:3001/api/v1/buy",{
+        symbol:SymbolRef.current?.value,
+        quantity:QnRef.current?.value,
+        price:PriceRef.current?.value
+      })
+    }
+
+    const router = useRouter(); 
 
     const [symbol, setSymbol] = useState("ETHUSDT");
     const [data,setData] = useState<any>()
@@ -91,7 +107,7 @@
           <div className="bg-gray-900 rounded-xl p-6 shadow-lg flex flex-col space-y-6">
             {/* Buttons */}
             <div className="flex justify-between">
-              <button className="cursor-pointer w-40 py-2 bg-green-500 hover:bg-green-600 rounded-md text-xl font-bold transition">
+              <button onSubmit={() => alert("Buyed")}onClick={() => Buy()}className="cursor-pointer w-40 py-2 bg-green-500 hover:bg-green-600 rounded-md text-xl font-bold transition">
                 BUY
               </button>
               <button className="cursor-pointer w-40 py-2 bg-red-500 hover:bg-red-600 rounded-md text-xl font-bold transition">
@@ -106,6 +122,7 @@
                   Enter Quantity
                 </label>
                 <input
+                  ref={QnRef}
                   type="number"
                   placeholder="eg: 23"
                   className="w-full rounded-md bg-gray-800 border border-gray-700 px-3 py-2 outline-none"
@@ -116,6 +133,7 @@
                   Enter Symbol
                 </label>
                 <input
+                  ref={SymbolRef}
                   type="text"
                   placeholder="Eg : AAPL"
                   className="w-full rounded-md bg-gray-800 border border-gray-700 px-3 py-2 outline-none"
@@ -126,6 +144,7 @@
                   Enter Price
                 </label>
                 <input
+                  ref={PriceRef}
                   type="number"
                   placeholder="eg: 243523"
                   className="w-full rounded-md bg-gray-800 border border-gray-700 px-3 py-2 outline-none"

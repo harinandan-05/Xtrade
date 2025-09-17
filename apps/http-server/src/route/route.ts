@@ -74,8 +74,12 @@ router.post("/login", async (req, res) => {
       JWT_SECRET
     );
 
-    res.status(200).json({ msg: "logged in", token });
-    return;
+    res.cookie("authorization",token,{
+      httpOnly:true,
+      sameSite:'none'
+    })
+    res.status(200).json({msg:"logged in"});
+    return
   } catch (error) {
     console.log(error);
     res.status(500).json({ msg: "sever error" });

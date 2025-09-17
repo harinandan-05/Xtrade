@@ -1,17 +1,19 @@
-import jwt, { JwtPayload }  from 'jsonwebtoken'
-import express, { NextFunction,Response,Request } from 'express'
-import { JWT_SECRET } from '@repo/common/common'
+import jwt from "jsonwebtoken";
+import express, { NextFunction, Response, Request } from "express";
+import { JWT_SECRET } from "@repo/common/common";
 
-export async function Middleware(req:Request,res:Response,next:NextFunction){
-    const authorization  = req.headers.authorization
-    const token = authorization && authorization.split(' ')[1]
+export async function Middleware(req: Request, res: Response, next: NextFunction) {
+    const token = req.cookies?.authorization; 
 
-    if(!token){
-        return res.status(400).json({msg:"no token found"})
+    if (!token) {
+        return res.status(400).json({ msg: "no token found" });
     }
-    
-    const decoded = jwt.verify(token,JWT_SECRET) as { id?: string };
-    if(!decoded){return res.status(400).json({msg:"invalid token"})}
-    req.user = decoded.id
-    next()
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET) as { id?: string };
+        req.user = decoded.id;
+        next();
+    } catch {
+        return res.status(400).json({ msg: "invalid token" });
+    }
 }
