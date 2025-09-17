@@ -5,7 +5,8 @@ export async function getPrice(symbol:string){
 
     const response = await fetch(url)
     const data = await response.json()
-    
+    console.log(data,"data from api")
+
     const timeseries = data["Time Series (Daily)"]
     if (!timeseries) {
         throw new Error("Could not fetch price data");
@@ -17,7 +18,7 @@ export async function getPrice(symbol:string){
      if (isNaN(closePrice)) {
         throw new Error("Invalid price data");
     }
- 
+    
     return closePrice
 }
 

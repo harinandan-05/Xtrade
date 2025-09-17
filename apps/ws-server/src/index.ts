@@ -28,7 +28,7 @@ wss.on("connection", (ws) => {
           if (!err && data) {
             ws.send(
               JSON.stringify({
-                value: Math.random(), 
+                value: (Math.random() - 0.5) * (Math.random() < 0.05 ? 40 : 2), 
                 time: new Date().toISOString(),
               })
             );

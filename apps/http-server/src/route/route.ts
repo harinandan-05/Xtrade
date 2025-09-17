@@ -8,6 +8,7 @@ import { findAncestor, tokenToString } from "typescript";
 import { BuyStock } from "../service/Buy";
 import { SellStock } from "../service/Sell";
 import { GetHistory } from "../service/Summary";
+import { getPrice } from "../trade.api/checkPrice";
 
 const router: Router = express.Router();
 
@@ -168,8 +169,23 @@ router.post("/buy", Middleware, async (req, res) => {
   }
 });
 
-router.get('/market/:symbol', Middleware, async(req,res) =>{
-
+router.post('/market', async(req,res) =>{
+  try{
+    const Symbol = req.body.Symbol
+    console.log(Symbol,"symbol")
+    if(!Symbol){
+      return res.status(400).json({msg:"no symbol was provided"})
+    }
+    const marketData = await getPrice(Symbol)
+    if(!marketData){
+      return res.status(400).json({msg:"api error fetching data"})
+    }
+    console.log(marketData,"marketdata")
+    return res.status(200).json({msg:`data for ${Symbol} is:`,marketData})
+  }
+  catch(err:any){
+    return res.status(500).json({msg:"server error"})
+  }
 })
 
 router.post('/market/summary/symbol', Middleware, async (req, res) => {
