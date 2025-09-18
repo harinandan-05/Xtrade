@@ -76,7 +76,8 @@ router.post("/login", async (req, res) => {
 
     res.cookie("authorization",token,{
       httpOnly:true,
-      sameSite:'none'
+      sameSite:'none',
+      secure:true
     })
     res.status(200).json({msg:"logged in"});
     return
@@ -159,7 +160,9 @@ router.post("/sell", Middleware, async (req, res) => {
 
 router.post("/buy", Middleware, async (req, res) => {
   try {
+    console.log("before req.user")
     const userid = req.user;
+    console.log("after req.user",userid)
     if (!userid) return res.status(401).json({ msg: "Unauthorized" });
 
     const { symbol, quantity } = req.body;

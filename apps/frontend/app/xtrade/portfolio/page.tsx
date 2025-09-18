@@ -9,7 +9,7 @@ export default function Dashboard() {
     { symbol: "META", name: "Meta Platforms Inc", shares: 5, price: 3524.35, change: -91.98, changePercent: -2.6 },
   ]);
 
-
+  
   async function Getbalance() {
     try {
       const res = await fetch("/api/v1/balance");

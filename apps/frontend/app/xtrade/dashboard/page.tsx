@@ -12,14 +12,29 @@ import axios from "axios";
     const SymbolRef = useRef<HTMLInputElement>(null)
 
     const [Quantity,setQuantity] = useState(null)
-
-    async function Buy(){
+    
+      async function Buy(){
+      axios.defaults.withCredentials = true;
       const response = await axios.post("http://localhost:3001/api/v1/buy",{
         symbol:SymbolRef.current?.value,
-        quantity:QnRef.current?.value,
-        price:PriceRef.current?.value
+        quantity:Number(QnRef.current?.value),
+        price:Number(PriceRef.current?.value)
       })
     }
+
+    async function Sell(){
+      axios.defaults.withCredentials = true;
+      const res = await axios.post("http://localhost:3001/api/v1/sell",{
+        symbol:SymbolRef.current?.value,
+        quantity:Number(QnRef.current?.value),
+        Price:Number(PriceRef.current?.value)
+      })
+    }
+    
+
+    console.log(QnRef.current?.value,"Qn value")
+    console.log(PriceRef.current?.value,"pref value")
+    console.log(SymbolRef.current?.value,"sref value")
 
     const router = useRouter(); 
 
@@ -40,7 +55,6 @@ import axios from "axios";
 
       ws.addEventListener('message',function(ev){
         const msg = JSON.parse(ev.data)
-        console.log(msg,"msg from websokcet")
         setData(msg)
       })
 
@@ -58,7 +72,6 @@ import axios from "axios";
       );
     }
 
-    console.log(data,"data to chart")
 
     return (
       <div className="bg-black min-h-screen flex text-white">
@@ -110,7 +123,7 @@ import axios from "axios";
               <button onSubmit={() => alert("Buyed")}onClick={() => Buy()}className="cursor-pointer w-40 py-2 bg-green-500 hover:bg-green-600 rounded-md text-xl font-bold transition">
                 BUY
               </button>
-              <button className="cursor-pointer w-40 py-2 bg-red-500 hover:bg-red-600 rounded-md text-xl font-bold transition">
+              <button onSubmit={() => alert("sold")} onClick={() => Sell()} className="cursor-pointer w-40 py-2 bg-red-500 hover:bg-red-600 rounded-md text-xl font-bold transition">
                 SELL
               </button>
             </div>
