@@ -1,39 +1,50 @@
 export default function Signup() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-black">
-      <div className="bg-gray-900 rounded-2xl shadow-lg w-full max-w-md p-8">
+    <div className="flex min-h-screen items-center justify-center bg-black text-white">
+      <div className="bg-gray-900 rounded-2xl shadow-xl w-full max-w-md p-8 border border-gray-800">
         
         {/* Title */}
-        <h1 className="text-3xl font-mono text-center text-yellow-400">
-          Signup to Xtrade
+        <h1 className="text-3xl font-bold text-center text-green-400">
+          Sign up to Xtrade
         </h1>
-        <div className="text-yellow-400 pl-28">
-            place to learn trade
-        </div>
+        <p className="text-center text-gray-400 mt-2">
+          Start your trading journey today
+        </p>
         
         {/* Inputs */}
         <div className="mt-8 flex flex-col gap-4">
           <input
-            type="username"
+            type="text"
             placeholder="Enter username"
-            className="px-4 py-2 border rounded-lg focus:outline-none text-yellow-400 focus:ring-2 focus:ring-yellow-400"
+            className="px-4 py-3 bg-black border border-gray-700 rounded-lg focus:outline-none text-white focus:ring-2 focus:ring-green-400"
           />
           <input
             type="email"
             placeholder="Enter email"
-            className="px-4 py-2 border rounded-lg focus:outline-none text-yellow-400 focus:ring-2 focus:ring-yellow-400"
+            className="px-4 py-3 bg-black border border-gray-700 rounded-lg focus:outline-none text-white focus:ring-2 focus:ring-green-400"
           />
           <input
             type="password"
             placeholder="Enter password"
-            className="px-4 py-2 border rounded-lg focus:outline-none text-yellow-400 focus:ring-2 focus:ring-yellow-400"
+            className="px-4 py-3 bg-black border border-gray-700 rounded-lg focus:outline-none text-white focus:ring-2 focus:ring-green-400"
           />
         </div>
 
         {/* Button */}
-        <button className="mt-6 w-full bg-yellow-400 text-gray-800 py-2 rounded-lg hover:bg-black transition">
-          Signup
+        <button className="mt-6 w-full bg-green-400 text-black font-semibold py-3 rounded-lg hover:bg-green-500 transition">
+          Sign Up
         </button>
+
+        {/* Extra Links */}
+        <div className="mt-6 text-center text-sm text-gray-400">
+          Already have an account?{" "}
+          <a
+            href="/auth/signin"
+            className="text-green-400 hover:underline"
+          >
+            Sign in
+          </a>
+        </div>
       </div>
     </div>
   );
