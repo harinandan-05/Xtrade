@@ -188,7 +188,11 @@ router.post('/market', async(req,res) =>{
       return res.status(400).json({msg:"api error fetching data"})
     }
     console.log(marketData,"marketdata")
-    return res.status(200).json({msg:`data for ${Symbol} is:`,marketData})
+    return res.status(200).json({
+      msg:"data from api",
+      symbol:Symbol,
+      ...marketData
+    })
   }
   catch(err:any){
     return res.status(500).json({msg:"server error"})

@@ -1,3 +1,5 @@
+import { PriceData } from "../types";
+
 const fetchs = require("node-fetch")
 export async function getPrice(symbol:string){
     
@@ -11,15 +13,15 @@ export async function getPrice(symbol:string){
     if (!timeseries) {
         throw new Error("Could not fetch price data");
     }
-
+    console.log(timeseries,"time series")
     const laetestDate = Object.keys(timeseries)[0]
     const latestData = timeseries[laetestDate!]
-    const closePrice = parseFloat(latestData["4. close"])
-     if (isNaN(closePrice)) {
-        throw new Error("Invalid price data");
-    }
-    
-    return closePrice
+    const high = parseFloat(latestData["1. open"])
+    const open = parseFloat(latestData["2. high"])
+    const low = parseFloat(latestData["3. low"])
+    const close = parseFloat(latestData["4. close"])
+    const finalData:PriceData ={high , open , low , close} 
+    return finalData
 }
 
 module.exports = {getPrice}

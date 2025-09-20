@@ -1,12 +1,13 @@
 import { prismaClient } from "@repo/database/client";
 import { getPrice } from "../trade.api/checkPrice";
+import { PriceData } from "../types";
 
 export async function BuyStock(
   symbol: string,
   quantity: number,
   userid: string
 ) {
-  const price: number = await getPrice(symbol);
+  const price:PriceData = await getPrice(symbol);
 
   return prismaClient.$transaction(async (tx) => {
     const user = await tx.user.findUnique({
@@ -21,7 +22,7 @@ export async function BuyStock(
       throw new Error("user not found");
     }
 
-    const cost = price * quantity;
+    const cost = price.close * quantity;
 
     const currentbalance = user.balance.toNumber();
 
@@ -43,7 +44,7 @@ export async function BuyStock(
         userId: userid,
         symbol: symbol,
         side: "BUY",
-        price: price,
+        price: price.close,
         quantity: quantity,
       },
     });
@@ -62,14 +63,14 @@ export async function BuyStock(
           userId: userid,
           symbol: symbol,
           quantity: quantity,
-          avgPrice: price,
+          avgPrice: price.close,
         },
       });
     } else {
       const newQuantity = portfolio.quantity + quantity;
       const newAvg =
         (portfolio.avgPrice.toNumber() * portfolio.quantity +
-          price * quantity) /
+          price.close * quantity) /
         newQuantity;
       await tx.position.update({
         where: {

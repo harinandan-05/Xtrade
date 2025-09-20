@@ -1,8 +1,9 @@
 import { prismaClient } from "@repo/database/client";
 import { getPrice } from "../trade.api/checkPrice";
+import { PriceData } from "../types";
 
 export async function SellStock(symbol: string, quantity: number, userid: string) {
-  const price: number = await getPrice(symbol);
+  const price:PriceData = await getPrice(symbol);
 
   return prismaClient.$transaction(async (tx) => {
     const user = await tx.user.findUnique({
@@ -27,7 +28,7 @@ export async function SellStock(symbol: string, quantity: number, userid: string
       throw new Error("not enough stocks");
     }
 
-    const cost = price * quantity;
+    const cost = price.close * quantity;
 
     await tx.user.update({
       where: { id: userid },
@@ -44,7 +45,7 @@ export async function SellStock(symbol: string, quantity: number, userid: string
         userId: userid,
         symbol,
         side: "SELL",
-        price,
+        price:price.close,
         quantity,
       },
     });

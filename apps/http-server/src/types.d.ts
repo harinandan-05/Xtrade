@@ -7,3 +7,11 @@ declare global {
     }
   }
 }
+
+export interface PriceData {
+      high:number | any,
+      close:number| any,
+      open:number | any,
+      low:number  |any
+}
+

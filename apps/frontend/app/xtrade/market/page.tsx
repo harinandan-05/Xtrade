@@ -52,24 +52,24 @@ export default function Market() {
               <h2 className="text-2xl font-bold text-green-400">{data.symbol}</h2>
               <div className="flex justify-between">
                 <span className="text-gray-400">Current Price</span>
-                <span className="font-bold text-lg">${data.currentPrice}</span>
+                <span className="font-bold text-lg">${data.close}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">Opening Price</span>
-                <span>${data.openPrice}</span>
+                <span>${data.open}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">Closing Price</span>
-                <span>${data.closePrice}</span>
+                <span>${data.close}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">Change</span>
                 <span
                   className={`font-bold ${
-                    data.change >= 0 ? "text-green-400" : "text-red-400"
+                    data.open - data.close >= 0 ? "text-green-400" : "text-red-400"
                   }`}
                 >
-                  {data.change >= 0 ? "▲" : "▼"} {data.change}%
+                  {data.open - data.change >= 0 ? "▲" : "▼"} {data.change}%
                 </span>
               </div>
             </div>
