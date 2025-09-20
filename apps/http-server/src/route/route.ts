@@ -228,6 +228,7 @@ router.get('/market-feed/history', Middleware, async(req,res) =>{
   
 })
 
+
 router.get('/balance',Middleware ,async(req,res) => {
   const userid = req.user
   try{
@@ -243,7 +244,8 @@ router.get('/balance',Middleware ,async(req,res) => {
     }
 
     const balance = Finduser.balance
-    return res.status(200).json({msg:"balance:",balance})
+    console.log(balance,"balacne http-route")
+    return res.status(200).json({balance})
   }catch(err){
     return res.status(500).json({msg:"internal server error"})
   }
