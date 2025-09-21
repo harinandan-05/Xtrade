@@ -1,24 +1,26 @@
 "use client"
 
+import axios from "axios";
 import { useEffect, useState } from "react";
 
 export default function Balance() {
-  const [balance, setbalance] = useState(null);
+  const [balance, setbalance] = useState<string | null>(null);
 
   async function Getbalance() {
     try {
-      const response = await fetch("/api/v1/balance");
-      const data = await response.json();
-      setbalance(data.balance);
+      axios.defaults.withCredentials = true
+      const response = await axios.get("http://localhost:3001/api/v1/balance");
+      const data = response.data
+      const balance = parseFloat(data.balance).toFixed(2)
+      setbalance(balance);
     } catch (err) {
       console.log(err);
     }
   }
+
   useEffect(() => {
     Getbalance();
 
-    const interval = setInterval(Getbalance, 5000);
-    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -27,8 +29,8 @@ export default function Balance() {
         <h1 className="text-gray-300 text-lg font-medium mb-2">
           Balance Amount
         </h1>
-        <div className="text-yellow-400 font-mono text-3xl">
-          ₹ 190088
+        <div className="text-green-400 font-mono text-3xl">
+          ${balance}
         </div>
       </div>
 

@@ -45,6 +45,9 @@ export default function Dashboard() {
   const [data, setData] = useState<any>();
 
   const wsRef = useRef<WebSocket | null>(null);
+  useEffect(() =>{
+    BalanceCheck()
+  },[])
 
   useEffect(() => {
     const ws_URL = "ws://localhost:8080";
@@ -98,10 +101,10 @@ export default function Dashboard() {
           Balance
         </button>
         <button
-          onClick={() => router.push("/xtrade/portfolio")}
+          onClick={() => router.push("/xtrade/market")}
           className="w-40 py-2 rounded-md bg-gray-700 hover:bg-gray-600 transition"
         >
-          Settings
+          Market
         </button>
         <button onClick={() => router.push("")}></button>
       </div>
@@ -123,7 +126,7 @@ export default function Dashboard() {
           <div className="flex justify-between">
             <button
               onClick={() => {
-                // Buy();
+                Buy();
                 BalanceCheck();
               }}
               className="cursor-pointer w-40 py-2 bg-green-500 hover:bg-green-600 rounded-md text-xl font-bold transition"

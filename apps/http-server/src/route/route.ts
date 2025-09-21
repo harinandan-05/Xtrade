@@ -124,17 +124,32 @@ router.get("/portfolio", Middleware, async (req, res) => {
     const Finduser = await prismaClient.position.findFirst({
       where: {
         userId: userid,
+      }
+    });
+    console.log(Finduser,"find user 1st")
+    const portfolioCheck = await prismaClient.position.findFirst({
+      where:{
+        userId:Finduser?.userId
       },
       select: {
         userId: true,
         symbol: true,
         quantity: true,
       },
-    });
+    })
+    console.log(portfolioCheck,"find user 2nd")
+
+
+    const Data = [{
+      symbol:portfolioCheck?.symbol,
+      quantity:portfolioCheck?.quantity
+    }]
+    console.log(Data,"Data got back")
+
     if (!Finduser) {
       return res.status(400).json({ msg: "no user found" });
     }
-    return res.status(200).json({ msg: "portfolio:", Finduser });
+    return res.status(200).json({ Data });
   } catch (err) {
     console.log(err);
   }
@@ -199,6 +214,7 @@ router.post('/market', async(req,res) =>{
   }
 })
 
+
 router.post('/market/summary/symbol', Middleware, async (req, res) => {
   try {
     const userid = req.user; 
@@ -229,6 +245,7 @@ router.get('/market-feed/history', Middleware, async(req,res) =>{
 })
 
 
+
 router.get('/balance',Middleware ,async(req,res) => {
   const userid = req.user
   try{
@@ -242,10 +259,9 @@ router.get('/balance',Middleware ,async(req,res) => {
     if(!Finduser){
       return res.status(400).json({msg:"no user exists"})
     }
-
     const balance = Finduser.balance
-    console.log(balance,"balacne http-route")
     return res.status(200).json({balance})
+
   }catch(err){
     return res.status(500).json({msg:"internal server error"})
   }
