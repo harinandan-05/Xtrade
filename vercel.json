@@ -1,5 +1,4 @@
 {
-  "installCommand": "pnpm install --frozen-lockfile",
-  "buildCommand": "pnpm run build",
-  "ignoreCommand": "pnpm turbo-ignore"
+  "installCommand": "pnpm install",
+  "buildCommand": "pnpm run build"
 }
