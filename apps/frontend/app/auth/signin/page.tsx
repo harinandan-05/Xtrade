@@ -33,7 +33,7 @@ export default function Signin() {
     <div className="flex min-h-screen items-center justify-center bg-black text-white">
       <div className="bg-gray-900 rounded-2xl shadow-xl w-full max-w-md p-8 border border-gray-800">
         {/* Title */}
-        <h1 className="text-3xl font-bold text-center text-green-400">
+        <h1 className="text-3xl font-bold text-center  text-green-400">
           Sign in to Xtrade
         </h1>
         <p className="text-center text-gray-400 mt-2">
@@ -59,7 +59,7 @@ export default function Signin() {
         {/* Button */}
         <button
           onClick={authCheck}
-          className="mt-6 w-full bg-green-400 text-black font-semibold py-3 rounded-lg hover:bg-green-500 transition"
+          className=" cursor-pointer mt-6 w-full bg-green-400 text-black font-semibold py-3 rounded-lg hover:bg-green-500 transition"
         >
           Sign In
         </button>

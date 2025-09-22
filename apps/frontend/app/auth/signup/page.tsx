@@ -61,8 +61,9 @@ export default function Signup() {
 
         {/* Button */}
         <button
+
           onClick={Authsignup}
-          className="mt-6 w-full bg-green-400 text-black font-semibold py-3 rounded-lg hover:bg-green-500 transition"
+          className="cursor-pointer mt-6 w-full bg-green-400 text-black font-semibold py-3 rounded-lg hover:bg-green-500 transition"
         >
           Sign Up
         </button>

@@ -1,6 +1,11 @@
 
 "use client"
+
+import { useRouter } from "next/navigation";
+
 export default function Homepage() {
+  const router = useRouter();
+
   return (
     <div className="bg-black min-h-screen flex flex-col text-white font-sans">
       {/* Navbar */}
@@ -8,12 +13,12 @@ export default function Homepage() {
         <h1 className="text-3xl font-extrabold text-green-400 tracking-wide">
           Xtrade
         </h1>
-        <div className="space-x-8">
+        <div className="space-x-8 cursor-pointer">
           <a href="#" className="hover:text-green-400 transition">Features</a>
           <a href="#" className="hover:text-green-400 transition">Pricing</a>
           <a href="#" className="hover:text-green-400 transition">Docs</a>
         </div>
-        <button className="bg-green-400 text-black font-semibold px-6 py-2 rounded-lg hover:bg-green-500 transition">
+        <button onClick={() => router.push('http://localhost:3000/auth/signup')} className="bg-green-400 cursor-pointer text-black font-semibold px-6 py-2 rounded-lg hover:bg-green-500 transition">
           Get Started
         </button>
       </nav>
@@ -31,10 +36,10 @@ export default function Homepage() {
           minimal design. Stay on top of the market, anytime, anywhere.
         </p>
         <div className="flex space-x-4 relative z-10">
-          <button className="bg-green-400 text-black px-6 py-3 rounded-lg font-semibold hover:bg-green-500 transition">
+          <button onClick={() => router.push('http://localhost:3000/auth/signup')} className="bg-green-400 cursor-pointer text-black px-6 py-3 rounded-lg font-semibold hover:bg-green-500 transition">
             Start Trading
           </button>
-          <button className="bg-gray-900 border border-gray-700 text-white px-6 py-3 rounded-lg hover:border-green-400 hover:text-green-400 transition">
+          <button onClick={() => router.push('http://localhost:3000/auth/signup')} className="bg-gray-900 border cursor-pointer border-gray-700 text-white px-6 py-3 rounded-lg hover:border-green-400 hover:text-green-400 transition">
             Learn More
           </button>
         </div>
