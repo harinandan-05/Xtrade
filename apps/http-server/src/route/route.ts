@@ -116,42 +116,31 @@ router.get("/dashboard", Middleware, async (req, res) => {
 });
 
 router.get("/portfolio", Middleware, async (req, res) => {
-  const userid = req.user;
-  if (!userid) {
-    return res.status(400).json({ msg: "user id present" });
+  const userId = req.user;
+
+  if (!userId) {
+    return res.status(400).json({ msg: "user id not present" });
   }
+
   try {
-    const Finduser = await prismaClient.position.findFirst({
-      where: {
-        userId: userid,
-      }
-    });
-    console.log(Finduser,"find user 1st")
-    const portfolioCheck = await prismaClient.position.findFirst({
-      where:{
-        userId:Finduser?.userId
-      },
+    const positions = await prismaClient.position.findMany({
+      where: { userId },
       select: {
-        userId: true,
         symbol: true,
         quantity: true,
       },
-    })
-    console.log(portfolioCheck,"find user 2nd")
+    });
 
-
-    const Data = [{
-      symbol:portfolioCheck?.symbol,
-      quantity:portfolioCheck?.quantity
-    }]
-    console.log(Data,"Data got back")
-
-    if (!Finduser) {
-      return res.status(400).json({ msg: "no user found" });
+    if (!positions || positions.length === 0) {
+      return res.status(200).json({ Data: [] });
     }
-    return res.status(200).json({ Data });
+
+    console.log("User portfolio:", positions);
+
+    return res.status(200).json({ Data: positions });
   } catch (err) {
-    console.log(err);
+    console.error("Error fetching portfolio:", err);
+    return res.status(500).json({ msg: "Internal Server Error" });
   }
 });
 

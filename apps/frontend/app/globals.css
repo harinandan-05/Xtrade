@@ -1,1 +1,4 @@
 @import "tailwindcss";
+:root {
+  font-family: var(--font-manrope), sans-serif;
+}

@@ -31,7 +31,7 @@ export default function Portfolio() {
 
   return (
     <div className="bg-black min-h-screen text-white flex flex-col items-center pt-16 space-y-8">
-      {/* Balance Card */}
+      {/* Balance*/}
       <div className="bg-gray-900 w-[500px] rounded-2xl p-6 shadow-lg">
         <div className="flex justify-between items-center">
           <span className="text-gray-400">X Trade</span>
@@ -42,7 +42,7 @@ export default function Portfolio() {
         </div>
       </div>
 
-      {/* Holdings Card */}
+      {/* Holdings*/}
       <div className="bg-gray-900 w-[500px] rounded-2xl p-6 shadow-lg">
         <h2 className="text-xl font-semibold mb-4">Holdings</h2>
         <div className="space-y-2">
@@ -62,7 +62,7 @@ export default function Portfolio() {
         </div>
       </div>
 
-      {/* Transactions Card */}
+      {/*Transactions*/}
       <div className="bg-gray-900 w-[500px] rounded-2xl p-6 shadow-lg">
         <h2 className="text-xl font-semibold mb-4">Transactions</h2>
         <div className="text-gray-400 italic">No transactions yet...</div>
